@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Správa Skladových Zásob</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Správa Skladových Zásob</h1>
+    <button onclick="nejdrazsi()">Zobrazit nejdražší produkt</button>
+    <br><br>
+    Filtrujte produkty s množstvím menším než: <input type="number" id="quantityFilter"><button onclick="filtrujPodleMnozstvi()">Filtrovat</button>
+    <br><br>
+    <button onclick="celkem()">Výpočet celkové hodnoty</button>
+    <br><br>
+    <table id="productTable">
+        <tr>
+            <th>Jméno</th>
+            <th>Cena za jednotku</th>
+            <th>Množství</th>
+        </tr>
+    </table>
+    <br>
+    <label for="productName">Název produktu:</label>
+    <input type="text" id="productName">
+    <label for="productMnozstvi">Nové množství:</label>
+    <input type="number" id="productMnozstvi">
+    <button onclick="obnovitMnozstvi()">Aktualizace množství</button>
+
+    <script>
+        const produkty = [
+            { name: "Tužka", cenaZaProdukt: 10, Mnozstvi: 100 },
+            { name: "Sešit", cenaZaProdukt: 20, Mnozstvi: 150 },
+            { name: "Batoh", cenaZaProdukt: 500, Mnozstvi: 50 },
+            { name: "Pravítko", cenaZaProdukt: 30, Mnozstvi: 75 },
+            { name: "Pero", cenaZaProdukt: 40, Mnozstvi: 200 },
+            { name: "Kalkulačka", cenaZaProdukt: 200, Mnozstvi: 30 },
+            { name: "Barvy", cenaZaProdukt: 150, Mnozstvi: 80 },
+            { name: "Štětce", cenaZaProdukt: 60, Mnozstvi: 120 },
+            { name: "Ležidlo", cenaZaProdukt: 300, Mnozstvi: 40 },
+            { name: "Mapa světa", cenaZaProdukt: 180, Mnozstvi: 60 }
+        ];
+
+        function zobrazProdukty() {
+            const tabulka = document.getElementById("productTable");
+            tabulka.innerHTML = "<tr><th>Jméno</th><th>Cena za jednotku</th><th>Množství</th></tr>";
+
+            produkty.forEach(produkt => {
+                const radek = tabulka.insertRow();
+                radek.insertCell(0).textContent = produkt.name;
+                radek.insertCell(1).textContent = produkt.cenaZaProdukt;
+                radek.insertCell(2).textContent = produkt.Mnozstvi;
+            });
+        }
+
+        function nejdrazsi() {
+            const nejdrazsiProdukt = produkty.reduce((max, produkt) => max.cenaZaProdukt > produkt.cenaZaProdukt ? max : produkt);
+            alert(`Nejdražší produkt je: ${nejdrazsiProdukt.name} (${nejdrazsiProdukt.cenaZaProdukt} za kus)`);
+        }
+
+        function filtrujPodleMnozstvi() {
+            const hraniceMnozstvi = parseInt(document.getElementById("quantityFilter").value);
+            const filtrovaneProdukty = produkty.filter(produkt => produkt.Mnozstvi < hraniceMnozstvi);
+            zobrazFiltrovaneProdukty(filtrovaneProdukty);
+        }
+
+        function zobrazFiltrovaneProdukty(filtrovaneProdukty) {
+            const tabulka = document.getElementById("productTable");
+            tabulka.innerHTML = "<tr><th>Jméno</th><th>Cena za jednotku</th><th>Množství</th></tr>";
+
+            filtrovaneProdukty.forEach(produkt => {
+                const radek = tabulka.insertRow();
+                radek.insertCell(0).textContent = produkt.name;
+                radek.insertCell(1).textContent = produkt.cenaZaProdukt;
+                radek.insertCell(2).textContent = produkt.Mnozstvi;
+            });
+        }
+
+        function celkem() {
+            const celkovaHodnota = produkty.reduce((acc, produkt) => acc + (produkt.cenaZaProdukt * produkt.Mnozstvi), 0);
+            alert(`Celková hodnota skladových zásob: ${celkovaHodnota}`);
+        }
+
+        function obnovitMnozstvi() {
+            const nazevProduktu = document.getElementById("productName").value;
+            const noveMnozstvi = parseInt(document.getElementById("productMnozstvi").value);
+
+            const indexProduktu = produkty.findIndex(produkt => produkt.name.toLowerCase() === nazevProduktu.toLowerCase());
+            if (indexProduktu !== -1) {
+                produkty[indexProduktu].Mnozstvi = noveMnozstvi;
+                zobrazProdukty();
+            } else {
+                alert("Produkt nenalezen!");
+            }
+        }
+
+        zobrazProdukty();
+    </script>
+</body>
+</html>
